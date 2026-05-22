@@ -34,7 +34,7 @@ const pokemonEvolutions = {
 const greySections = [
   { start: 23, end: 27, rule: 'No talking while in the Pokemon Tower. If you talk, take a drink.' },
   { start: 36, end: 40, rule: 'While infiltrating Team Rocket HQ, take 2 drinks to calm your nerves before each turn.' },
-  { start: 48, end: 51, rule: 'You are bound by the grey zone rule while you remain in this stretch.' }
+  { start: 48, end: 51, rule: 'Before each turn in the Safari Zone, roll a die. 1-2: You throw bait. Give 1 drink to someone. 3-4: You throw a rock, dick. Lose your turn, drink 4. 5-6: You throw a safari ball. Drink 2 in sadness, because safari balls are just awful.' }
 ];
 
 const battleAdvantage = {
@@ -238,11 +238,6 @@ function buildSpaces() {
     for (let i = start; i <= end; i += 1) {
       spaces[i].color = 'grey';
       spaces[i].name = `Grey Area ${i}`;
-      // Only overwrite the description for the first space in the grey section
-      if (i === start) {
-        spaces[i].description = `Start of grey zone. ${rule}`;
-      }
-      // All other grey spaces keep their unique event text
     }
   });
 
@@ -659,7 +654,8 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   // Space 4: Replace starter with Pikachu
   if (finalLandedSpace.index === 4 && player.starter !== 'Pikachu') {
     player.starter = 'Pikachu';
-    logLine(`${player.name} landed on space 4 and their starter has been replaced with Pikachu!`);
+    rollResult.textContent = `${player.name} landed on Pikachu and replaces their starter with Pikachu!`;
+    logLine(`${player.name} landed on Pikachu and their starter has been replaced with Pikachu!`);
   }
 
   // Space 6: Pewter Gym Lucky roll (button-triggered)
@@ -673,7 +669,8 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   // Space 10: Jigglypuff Extra turn
   if (finalLandedSpace.index === 10) {
     player.extraTurn = true;
-    logLine(`${player.name} landed on space 10 and will get an extra turn!`);
+    rollResult.textContent = `${player.name} landed on Jigglypuff and gets an extra turn!`;
+    logLine(`${player.name} landed on Jigglypuff and will get an extra turn!`);
   }
 
     // Space 12: Gary
@@ -688,33 +685,33 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   if (finalLandedSpace.index === 18) {
     player.awaitingSpace18Roll = true;
     logLine(`${player.name} landed on S.S. Anne!`);
-    rollResult.textContent = `${player.name} landed on S.S. Anne! Click the Roll Die button to see how many turns you will miss.`;
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on S.S. Anne! Click the Roll Die button to see how many turns you will miss.`;
   }
 
   // Space 19: Vermilion Gym. Roll die to determine paralysis
   if (finalLandedSpace.index === 19) {
     player.awaitingSpace19Roll = true;
     logLine(`${player.name} landed on Vermilion Gym!`);
-    rollResult.textContent = `${player.name} landed on Vermilion Gym! Click the Roll Die button to proceed.`;
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on Vermilion Gym! Click the Roll Die button to proceed.`;
   }
 
   // Space 20: Next roll is doubled
   if (finalLandedSpace.index === 20) {
     player.nextTurnDoubled = true;
-    logLine(`${player.name} landed on space 20. Their next roll will be doubled.`);
+    logLine(`${player.name} landed on Bicycle Bicycle Bicycle. Their next roll will be doubled.`);
   }
 
   // Space 21: Magikarp landing
   if (finalLandedSpace.index === 21) {
     player.landedOn21 = true;
-    logLine(`${player.name} landed on space 21.`);
+    logLine(`${player.name} landed on Magikarp!`);
   }
   // Space 25: Haunter - Choose player to send back 10 spaces
   if (finalLandedSpace.index === 25) {
     player.awaitingPlayerChoice = true;
     player.choiceSpace = 25;
-    logLine(`${player.name} landed on space 25. Choose another player to send back 10 spaces.`);
-    rollResult.textContent = `${player.name} landed on space 25. Choose a player to send back 10 spaces.`;
+    logLine(`${player.name} landed on Haunter. Choose another player to send back 10 spaces.`);
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on Haunter. Choose a player to send back 10 spaces.`;
     showPlayerChoice();
   }
 
@@ -722,14 +719,14 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   if (finalLandedSpace.index === 30) {
     player.awaitingSpace30Roll = true;
     logLine(`${player.name} landed on Gary!`);
-    rollResult.textContent = `${player.name} landed on Gary! Click the Roll Die button to proceed.`;
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on Gary! Click the Roll Die button to proceed.`;
   }
 
   // Space 32: Celadon Gym
   if (finalLandedSpace.index === 32) {
     player.awaitingTurn32Roll = true;
     logLine(`${player.name} landed on Celadon Gym! They must roll a die.`);
-    rollResult.textContent = `${player.name} landed on Celadon Gym! Click the Roll Die button to proceed.`;
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on Celadon Gym! Click the Roll Die button to proceed.`;
   }
 
   // Space 34: Evolution choice
@@ -761,6 +758,13 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
     logLine(`${player.name} landed on Rare Candy and gets an extra turn!`);
   }
 
+  // Space 42: Roll for drinks before turn can end
+  if (finalLandedSpace.index === 42) {
+    player.awaitingSpace42DrinkRoll = true;
+    logLine(`${player.name} landed on Gary and must roll to determine drinks.`);
+    rollResult.textContent = `${player.name} rolled a ${landingRoll} and landed on Gary! Roll a die and drink that many.`;
+  }
+
   // Space 43: Saffron Gym
   if (finalLandedSpace.index === 43) {
     if (player.justEvolved) {
@@ -778,8 +782,8 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   // Space 49: Dratini - Roll die to catch
   if (finalLandedSpace.index === 49) {
     player.awaitingSpace49Roll = true;
-    logLine(`${player.name} landed on space 49!`);
-    rollResult.textContent = `${player.name} landed on space 49! Click the Roll Die button to proceed.`;
+    logLine(`${player.name} landed on Dratini!`);
+    rollResult.textContent = `${player.name} landed on Dratini! Roll a 1 to catch it.`;
   }
 
   // Space 51: Chansey - Roll die to catch
@@ -816,6 +820,7 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
     player.awaitingFavoritePokemonChoice = true;
     logLine(`${player.name} Is their favorite pokemon on the board?`);
     rollResult.textContent = `${player.name}, is your favorite pokemon on the game board?`;
+    showFavoritePokemonChoice();
   }
 
   // Space 62: Persian - Roll die to give drinks
@@ -836,11 +841,11 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
   if (finalLandedSpace.index === 66) {
     if (player.landedOn21) {
       logLine(`${player.name} landed on Gyarados, but they had landed on Magikarp! They give 4 drinks.`);
-      rollResult.textContent = `${player.name} landed on Magikarp before! Give 4 drinks.`;
+      rollResult.textContent = `${player.name} rolled a ${landingRoll} and had previously landed on Magikarp! Give 4 drinks.`;
       player.landedOn21 = false;
     } else {
       logLine(`${player.name} landed on Gyarados and takes 4 drinks.`);
-      rollResult.textContent = `${player.name} takes 4 drinks.`;
+      rollResult.textContent = `${player.name} rolled a ${landingRoll}.`;
     }
   }
 
@@ -875,6 +880,14 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
     showDrinkQuestion();
   }
 
+  // Space 71: Pokemon Master - Player is finished and takes no more turns
+  if (finalLandedSpace.index === 71) {
+    player.finished = true;
+    player.extraTurn = false;
+    logLine(`${player.name} became a Pokemon Master and is finished with the game!`);
+    rollResult.textContent = `${player.name} is now a Pokemon Master!`;
+  }
+
   if (finalLandedSpace.color === 'grey') {
     const section = findGreySection(player.position);
     if (section && section.start === player.position) {
@@ -898,17 +911,6 @@ async function movePlayer(player, rolls, landingRoll = rolls) {
     player.activeGreyRule = null;
     player.greySectionEnd = null;
     logLine(`${player.name} left the grey section and is no longer bound by that rule.`);
-  }
-
-  // Only apply gameplay effects for the third grey section (48–51)
-  if (player.activeGreyRule && landedSpace.color === 'grey') {
-    // Only apply gameplay logic if in the third grey section
-    if (player.position >= 48 && player.position <= 51) {
-      if (player.activeGreyRule.includes('skip your next turn') && rolls === 1) {
-        player.skipNextTurn = true;
-        logLine(`${player.name} will skip next turn if they roll a 1 while in this grey section.`);
-      }
-    }
   }
 
   refreshBoardTokens();
@@ -1266,6 +1268,17 @@ async function handleRoll() {
     return;
   }
 
+  // Check if player is on space 42 and must roll for drinks before ending turn
+  if (player.awaitingSpace42DrinkRoll) {
+    const roll = getDiceRoll();
+    logLine(`${player.name} rolled a ${roll} on Gary and must take ${roll} drink${roll !== 1 ? 's' : ''}.`);
+    rollResult.textContent = `${player.name} rolled a ${roll} on Gary. Take ${roll} drink${roll !== 1 ? 's' : ''}.`;
+    player.awaitingSpace42DrinkRoll = false;
+    rollButton.disabled = true;
+    nextTurnButton.disabled = false;
+    return;
+  }
+
   // Check if player is in a Missingno roll sequence
   if (player.missingnoRollsLeft > 0) {
     const roll = getDiceRoll();
@@ -1362,6 +1375,25 @@ async function handleRoll() {
     return;
   }
 
+  // Grey Zone (48-51): roll before movement each turn while still in the zone.
+  if (player.position >= 48 && player.position <= 51) {
+    const safariRoll = getDiceRoll();
+
+    if (safariRoll <= 2) {
+      logLine(`${player.name} rolled a ${safariRoll} in the Safari Zone (1-2): throw bait and give 1 drink.`);
+      rollResult.textContent = `${player.name} rolled a ${safariRoll} in the Safari Zone. Throw bait: give 1 drink.`;
+    } else if (safariRoll <= 4) {
+      logLine(`${player.name} rolled a ${safariRoll} in the Safari Zone (3-4): throw a rock, lose turn, drink 4.`);
+      rollResult.textContent = `${player.name} rolled a ${safariRoll} in the Safari Zone. Throw a rock: lose this turn and drink 4.`;
+      nextTurnButton.disabled = false;
+      rollButton.disabled = true;
+      return;
+    } else {
+      logLine(`${player.name} rolled a ${safariRoll} in the Safari Zone (5-6): throw a safari ball and drink 2.`);
+      rollResult.textContent = `${player.name} rolled a ${safariRoll} in the Safari Zone. Throw a safari ball: drink 2.`;
+    }
+  }
+
   const originalDie = getDiceRoll();
   let movement = originalDie;
 
@@ -1395,12 +1427,16 @@ async function handleRoll() {
   updateStatus();
   
   // Keep roll button enabled if player is awaiting any special rolls or choices
-  if (player.awaitingLuckyRoll || player.awaitingTurn32Roll || player.awaitingSpace18Roll || player.awaitingSpace18DrinksRoll || 
+  if (player.awaitingFavoritePokemonChoice) {
+    rollButton.disabled = true;
+    nextTurnButton.disabled = true;
+  }
+  else if (player.awaitingLuckyRoll || player.awaitingTurn32Roll || player.awaitingSpace18Roll || player.awaitingSpace18DrinksRoll || 
       player.awaitingSpace19Roll || player.awaitingSpace30Roll || player.awaitingSpace40Roll ||
       player.awaitingSpace49Roll || player.awaitingSpace51Roll || player.awaitingSpace58Roll ||
-      player.awaitingSpace62Roll || player.awaitingEvolution || player.awaitingPlayerChoice ||
+      player.awaitingSpace62Roll || player.awaitingSpace42DrinkRoll || player.awaitingEvolution || player.awaitingPlayerChoice ||
       player.awaitingConfusionChoice || player.awaitingNumberPick || 
-      player.awaitingFavoritePokemonChoice || player.pickedNumber !== null || 
+      player.pickedNumber !== null || 
       player.favoritePokemonOnBoard === true || player.awaitingDrinkQuestion ||
       player.catchingLegendaryBirds || player.stuckOnEliteFour ||
       player.missingnoRollsLeft > 0) {
@@ -1419,13 +1455,27 @@ async function handleRoll() {
 
 function nextTurn() {
   const currentPlayer = players[currentPlayerIndex];
+
+  if (currentPlayer.finished) {
+    currentPlayer.extraTurn = false;
+  }
   
   // Check if current player has an extra turn
-  if (currentPlayer.extraTurn) {
+  if (!currentPlayer.finished && currentPlayer.extraTurn) {
     currentPlayer.extraTurn = false;
     logLine(`${currentPlayer.name} gets their extra turn!`);
   } else {
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    const nextIndex = players.findIndex((_, offset) => !players[(currentPlayerIndex + offset + 1) % players.length].finished);
+
+    if (nextIndex === -1) {
+      gameState.textContent = 'All players are Pokemon Masters. Game over!';
+      rollResult.textContent = 'All players are Pokemon Masters!';
+      rollButton.disabled = true;
+      nextTurnButton.disabled = true;
+      return;
+    }
+
+    currentPlayerIndex = (currentPlayerIndex + nextIndex + 1) % players.length;
     logLine(`Turn moves to ${players[currentPlayerIndex].name}.`);
   }
   
@@ -1495,6 +1545,7 @@ function startGame() {
       stuckOnEliteFour: false,
       awaitingDrinkQuestion: false,
       championGaryCleared: false,
+      finished: false,
       awaitingSpace18Roll: false,
       awaitingSpace18DrinksRoll: false,
       space18TurnsMissed: 0,
@@ -1506,6 +1557,7 @@ function startGame() {
       awaitingSpace58Roll: false,
       space58EvenCount: 0,
       awaitingSpace62Roll: false,
+      awaitingSpace42DrinkRoll: false,
       justEvolved: false
     });
   });
@@ -1533,7 +1585,11 @@ playerCountSelect.addEventListener('change', () => {
 startButton.addEventListener('click', () => startGame());
 rollButton.addEventListener('click', () => handleRoll());
 nextTurnButton.addEventListener('click', () => nextTurn());
-resetButton.addEventListener('click', () => resetGame());
+resetButton.addEventListener('click', () => {
+  if (confirm('Are you sure you want to reset the game?')) {
+    resetGame();
+  }
+});
 
 setUpBoardPositions();
 createPlayerRows(Number(playerCountSelect.value));
