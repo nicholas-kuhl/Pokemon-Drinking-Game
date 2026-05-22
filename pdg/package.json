@@ -1,0 +1,13 @@
+{
+  "name": "pokemon-board-game",
+  "version": "1.0.0",
+  "description": "A turn-based Pokémon board game",
+  "main": "game.js",
+  "scripts": {
+    "start": "node game.js"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5",
+    "tesseract.js": "^4.0.2"
+  }
+}

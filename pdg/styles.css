@@ -1,0 +1,380 @@
+/* ── Pokémon Theme ── */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --pokered:     #e3350d;
+  --pokered-dark:#b02a0a;
+  --pokeyellow:  #f8d030;
+  --pokeyellow-dark: #c8a800;
+  --pokeblue:    #4a90d9;
+  --pokeblue-dark: #2563a8;
+  --pokegreen:   #38a169;
+  --pokegray:    #8e8e8e;
+  --pokebg:      #f0f4f8;
+  --panel-bg:    #ffffff;
+  --panel-border:#d0d8e4;
+  --text-dark:   #1a1a2e;
+  --text-mid:    #444466;
+
+  color-scheme: light;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--pokebg);
+  color: var(--text-dark);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(227,53,13,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 100%, rgba(74,144,217,0.12) 0%, transparent 55%),
+    var(--pokebg);
+}
+
+main {
+  width: min(1400px, 100%);
+  display: grid;
+  gap: 24px;
+}
+
+/* ── Header ── */
+header {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(1.1rem, 2.2vw, 1.9rem);
+  color: var(--pokered);
+  text-shadow: 3px 3px 0 var(--pokered-dark), 0 0 24px rgba(227,53,13,0.25);
+  letter-spacing: 1px;
+}
+
+h2 {
+  margin: 0 0 14px 0;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: var(--pokeblue-dark);
+  letter-spacing: 1px;
+}
+
+h3 {
+  margin: 12px 0 6px 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-mid);
+}
+
+p { margin: 0; }
+
+/* ── Panels ── */
+.panel {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(74,144,217,0.08), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ── Layout ── */
+.game-setup {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(260px, 380px) minmax(320px, 1fr);
+}
+
+.board-section {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1.5fr 0.9fr;
+}
+
+/* ── Board ── */
+#board-container {
+  position: relative;
+  min-height: 760px;
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+
+#board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 3px solid var(--pokered);
+  box-shadow: 0 0 0 4px var(--pokeyellow), 0 8px 32px rgba(0,0,0,0.18);
+}
+
+#board img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#board-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Space Dots ── */
+.space-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.18);
+  transform: translate(-50%, -50%);
+}
+.space-dot.yellow  { background: #ffec80; border-color: #d8b52b; }
+.space-dot.grey    { background: #c8ccd4; border-color: #8a8fa0; }
+.space-dot.start   { background: #98d5ff; border-color: #3c95d0; }
+
+/* ── Player Tokens ── */
+.player-token {
+  position: absolute;
+  min-width: 26px;
+  min-height: 26px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 3px #fff, 0 2px 8px rgba(0,0,0,0.28);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.player-token.p0 { background: #e3350d; }
+.player-token.p1 { background: #3b82f6; }
+.player-token.p2 { background: #f59e0b; }
+.player-token.p3 { background: #16a34a; }
+.player-token.p4 { background: #8b5cf6; }
+.player-token.p5 { background: #ec4899; }
+
+/* ── Inputs ── */
+input, select, button { font: inherit; }
+
+label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-mid);
+}
+
+input, select {
+  width: 100%;
+  border: 2px solid #c9d4e8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f8faff;
+  color: var(--text-dark);
+  transition: border-color 0.2s;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--pokeblue);
+}
+
+/* ── Buttons ── */
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+}
+button:active:not(:disabled) { transform: scale(0.96); }
+button:hover:not(:disabled)  { filter: brightness(1.08); }
+
+/* Start Game */
+button.primary, #start-game {
+  background: linear-gradient(135deg, var(--pokered) 0%, var(--pokered-dark) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(227,53,13,0.35);
+  border-bottom: 3px solid var(--pokered-dark);
+}
+
+/* Roll Die — Pokéball yellow */
+#roll-button {
+  background: linear-gradient(135deg, var(--pokeyellow) 0%, var(--pokeyellow-dark) 100%);
+  color: #1a1a2e;
+  box-shadow: 0 4px 12px rgba(248,208,48,0.4);
+  border-bottom: 3px solid var(--pokeyellow-dark);
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* End Turn — blue */
+#next-turn-button {
+  background: linear-gradient(135deg, var(--pokeblue) 0%, var(--pokeblue-dark) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(74,144,217,0.35);
+  border-bottom: 3px solid var(--pokeblue-dark);
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* Reset — gray */
+#reset-button {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+  border-bottom: 3px solid #374151;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+  box-shadow: none;
+}
+
+/* ── Player Rows ── */
+.player-row {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #fff9f0 0%, #f0f6ff 100%);
+  border: 2px solid #e8d8f8;
+  border-radius: 14px;
+}
+.player-row h3 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--pokered);
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* ── Current Player Card ── */
+#current-player-card {
+  background: linear-gradient(135deg, #fff7e6 0%, #fff0f0 100%);
+  border: 2px solid #ffd580;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+#current-player-card p {
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+  color: var(--text-mid);
+}
+#current-player-card strong {
+  color: var(--text-dark);
+}
+#current-player-name { color: var(--pokered); font-weight: 800; }
+#current-player-starter { color: var(--pokegreen); font-weight: 700; }
+#current-grey-rule { color: #7c3aed; font-weight: 700; }
+
+/* ── Roll Result ── */
+.roll-result {
+  margin-top: 10px;
+  min-height: 42px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%);
+  border-radius: 12px;
+  border: 2px solid var(--pokeyellow);
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* ── Space Description ── */
+.space-description {
+  margin-top: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, #e8f4ff 0%, #f0e8ff 100%);
+  border-radius: 12px;
+  border: 2px solid #b8d8f8;
+  color: var(--text-dark);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* ── Player Choice Buttons ── */
+.player-choice {
+  margin-top: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe8b0 100%);
+  border-radius: 14px;
+  border: 2px solid var(--pokeyellow);
+}
+.player-choice p {
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+.player-choice button {
+  margin: 4px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, var(--pokered) 0%, var(--pokered-dark) 100%);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 8px rgba(227,53,13,0.3);
+  border-bottom: 2px solid var(--pokered-dark);
+}
+.player-choice button:hover { filter: brightness(1.1); }
+
+/* ── Game Log ── */
+.game-log {
+  min-height: 240px;
+  max-height: 420px;
+  overflow: auto;
+  padding: 12px;
+  background: #1a1a2e;
+  border-radius: 14px;
+  border: 2px solid #2e2e4e;
+  color: #e0e8ff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.game-log div:nth-child(odd)  { color: #f8d030; }
+.game-log div:nth-child(even) { color: #98d5ff; }
+
+/* ── Log Panel Header ── */
+.log-panel h2 { color: var(--pokeyellow-dark); }
+
+/* ── Scrollbar ── */
+.game-log::-webkit-scrollbar { width: 6px; }
+.game-log::-webkit-scrollbar-track { background: #11112a; border-radius: 4px; }
+.game-log::-webkit-scrollbar-thumb { background: #4a90d9; border-radius: 4px; }
+
+/* ── Game State ── */
+#game-state {
+  font-weight: 700;
+  color: var(--pokeblue-dark);
+  margin-bottom: 6px;
+}
+
+.hidden { display: none; }
+
+@media (max-width: 1080px) {
+  .game-setup,
+  .board-section { grid-template-columns: 1fr; }
+  body { padding: 12px; }
+  h1 { font-size: 1rem; }
+}

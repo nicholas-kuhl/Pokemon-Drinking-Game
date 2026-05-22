@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokémon Board Game</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Pokémon Board Game</h1>
+      <p>Turn-based board game using <strong>gameBoard.webp</strong> as the board. Players roll a die and move automatically.</p>
+    </header>
+
+    <section class="game-setup">
+      <div class="panel setup-panel">
+        <h2>Player Setup</h2>
+        <label>
+          Number of players:
+          <select id="player-count">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+
+        <div id="player-entries" class="player-entries"></div>
+
+        <button id="start-game" class="primary">Start Game</button>
+      </div>
+    </section>
+
+    <section class="board-section">
+      <div id="board-container">
+        <div id="board">
+          <img id="board-image" src="gameBoard.webp" alt="Game board" />
+          <div id="board-overlay"></div>
+        </div>
+      </div>
+
+      <div class="panel control-panel">
+        <h2>Game Controls</h2>
+        <button id="roll-button" disabled>Roll Die</button>
+        <button id="next-turn-button" disabled>End Turn</button>
+        <button id="reset-button">Reset Game</button>
+        <div id="roll-result" class="roll-result"></div>
+        <div id="player-choice" class="player-choice hidden"></div>
+
+        <h3>Current Game</h3>
+        <p id="game-state">Set up the game to begin.</p>
+        <div id="current-player-card" class="card hidden">
+          <p><strong>Current turn:</strong> <span id="current-player-name"></span></p>
+          <p><strong>Starter:</strong> <span id="current-player-starter"></span></p>
+          <p><strong>Rule:</strong> <span id="current-grey-rule">None</span></p>
+        </div>
+        <div id="space-description" class="space-description hidden"></div>
+      </div>
+    </section>
+
+    <section class="panel log-panel">
+      <h2>Game Log</h2>
+      <div id="game-log" class="game-log"></div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

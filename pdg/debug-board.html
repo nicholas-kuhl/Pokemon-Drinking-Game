@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Debug Board</title>
+  <style>
+    body { margin: 0; background: #222; display: grid; place-items: center; min-height: 100vh; }
+    #container { position: relative; width: 80vmin; }
+    img { width: 100%; display: block; }
+    .grid-line { position: absolute; background: rgba(255,0,0,0.7); }
+    .label { position: absolute; color: white; font-size: 12px; text-shadow: 0 0 4px #000; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <img id="board" src="gameBoard.webp" alt="board" />
+  </div>
+  <script>
+    const container = document.getElementById('container');
+    const img = document.getElementById('board');
+    img.addEventListener('load', () => {
+      const size = container.clientWidth;
+      // Create 9x9 grid with 15% margins on all sides
+      for (let i = 0; i <= 9; i++) {
+        const h = document.createElement('div');
+        h.className = 'grid-line';
+        h.style.left = '0';
+        h.style.top = `${15 + (i/9)*70}%`;
+        h.style.width = '100%';
+        h.style.height = '1px';
+        container.appendChild(h);
+        const v = document.createElement('div');
+        v.className = 'grid-line';
+        v.style.top = '0';
+        v.style.left = `${15 + (i/9)*70}%`;
+        v.style.height = '100%';
+        v.style.width = '1px';
+        container.appendChild(v);
+      }
+    });
+  </script>
+</body>
+</html>
