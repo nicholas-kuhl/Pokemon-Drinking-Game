@@ -179,8 +179,10 @@ io.on('connection', (socket) => {
   });
 
   // Current player pushes a fresh state snapshot after each local action.
-  // Server validates the sender owns the current turn, stores it, and
-  // broadcasts so everyone else syncs.
+  // Server validates the sender is a member of the room (we trust the client
+  // for game logic in this thin-server model). We can't validate against
+  // state.currentPlayerIndex because end-turn actions legitimately advance it
+  // to the *next* player before the push.
   socket.on('sync-state', ({ state } = {}, ack) => {
     const room = rooms.get(socket.data.roomCode);
     if (!room) {
@@ -191,11 +193,9 @@ io.on('connection', (socket) => {
       if (typeof ack === 'function') ack({ ok: false, error: 'Invalid state' });
       return;
     }
-    // Validate it really is this socket's turn (best-effort: match by
-    // playerId stored at join time against state.players[currentPlayerIndex]).
-    const currentSeatId = room.players[state.currentPlayerIndex]?.id;
-    if (currentSeatId && currentSeatId !== socket.data.playerId) {
-      if (typeof ack === 'function') ack({ ok: false, error: 'Not your turn' });
+    const sender = room.players.find((p) => p.id === socket.data.playerId);
+    if (!sender) {
+      if (typeof ack === 'function') ack({ ok: false, error: 'Not a member of this room' });
       return;
     }
     room.state = state;
