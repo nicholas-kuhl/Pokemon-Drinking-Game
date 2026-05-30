@@ -42,7 +42,8 @@ function serializeState() {
     players: JSON.parse(JSON.stringify(players)),
     currentPlayerIndex,
     gameStarted,
-    log: gameLogEntries.slice()
+    log: gameLogEntries.slice(),
+    rollResult: (rollResult && rollResult.textContent) || ''
   };
 }
 
@@ -54,6 +55,9 @@ function loadState(snapshot) {
   if (Number.isInteger(snapshot.currentPlayerIndex)) currentPlayerIndex = snapshot.currentPlayerIndex;
   if (typeof snapshot.gameStarted === 'boolean') gameStarted = snapshot.gameStarted;
   if (Array.isArray(snapshot.log)) gameLogEntries = snapshot.log.slice();
+  if (typeof snapshot.rollResult === 'string' && rollResult) {
+    rollResult.textContent = snapshot.rollResult;
+  }
 }
 
 // Single entry point to redraw the world from state. Safe to call any time.
@@ -682,7 +686,9 @@ async function prefetchDiceIfOnline(count = 16) {
 function schedulePushState() {
   if (!isOnline()) return;
   if (applyingRemoteSnapshot) return;
-  if (!myTurnOnline()) return;
+  // Note: deliberately NOT gating on myTurnOnline() here. After an end-turn
+  // the local currentPlayerIndex has already advanced to the next player, but
+  // the push *must* still happen so everyone learns about the handoff.
   if (pendingPush) return;
   pendingPush = true;
   Promise.resolve().then(() => {
@@ -706,9 +712,13 @@ function applyRemoteSnapshot(snapshot) {
     if (!myTurnOnline()) {
       rollButton.disabled = true;
       nextTurnButton.disabled = true;
-      rollResult.textContent = `Waiting for ${players[currentPlayerIndex]?.name || 'other player'}…`;
+      // Show what the current player just rolled (already loaded into
+      // rollResult.textContent by loadState); only fall back to a generic
+      // waiting message if nothing was sent.
+      if (!rollResult.textContent) {
+        rollResult.textContent = `Waiting for ${players[currentPlayerIndex]?.name || 'other player'}…`;
+      }
     } else {
-      rollResult.textContent = '';
       rollButton.disabled = false;
       nextTurnButton.disabled = true;
     }
@@ -1877,7 +1887,17 @@ startButton.addEventListener('click', () => {
   startGame();
 });
 rollButton.addEventListener('click', () => handleRoll().then(() => schedulePushState()));
-nextTurnButton.addEventListener('click', () => { nextTurn(); schedulePushState(); });
+nextTurnButton.addEventListener('click', () => {
+  nextTurn();
+  // In online mode, if the turn just moved to someone else, lock our controls
+  // so we behave as a spectator until our turn comes around again.
+  if (isOnline() && !myTurnOnline()) {
+    rollButton.disabled = true;
+    nextTurnButton.disabled = true;
+    rollResult.textContent = `Waiting for ${players[currentPlayerIndex]?.name || 'other player'}…`;
+  }
+  schedulePushState();
+});
 resetButton.addEventListener('click', () => {
   if (confirm('Are you sure you want to reset the game?')) {
     resetGame();

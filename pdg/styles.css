@@ -534,3 +534,7 @@ button:disabled {
 .mode-btn.active { background: var(--pokeblue); color: #fff; border-color: var(--pokeblue-dark); }
 .mode-form { margin-top: 8px; }
 .mode-form h3 { margin: 0 0 8px; }
+
+.seat-rows { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.seat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.seat-row label { display: flex; flex-direction: column; font-size: 0.85rem; flex: 1; min-width: 130px; }
